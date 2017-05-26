@@ -83,8 +83,75 @@ set qos(a){this._setQos(a)},get retained(){return this._getRetained()},set retai
           groupId: 1,
           adminId: 666
         };
+
+        // 将当前的用户注册进入数据库
+        ajax({
+          url: "http://120.24.6.91:8082/wx/powderSystem/joinGroupByUser",              
+          type: "GET",                       
+          data: { 
+            uid:  userObj.uid,
+            openId: userObj.openId,
+            groupId: userObj.groupId
+          },        
+          dataType: "json",
+          success: function (response, xml) {
+              // 此处放成功后执行的代码
+          },
+          fail: function (status) {
+              // 此处放失败后执行的代码
+          }
+      });
+
+
+        function ajax(options) {
+          options = options || {};
+          options.type = (options.type || "GET").toUpperCase();
+          options.dataType = options.dataType || "json";
+          var params = formatParams(options.data);
+
+          //创建 - 非IE6 - 第一步
+          if (window.XMLHttpRequest) {
+              var xhr = new XMLHttpRequest();
+          } else { //IE6及其以下版本浏览器
+              var xhr = new ActiveXObject('Microsoft.XMLHTTP');
+          }
+
+          //接收 - 第三步
+          xhr.onreadystatechange = function () {
+              if (xhr.readyState == 4) {
+                  var status = xhr.status;
+                  if (status >= 200 && status < 300) {
+                      options.success && options.success(xhr.responseText, xhr.responseXML);
+                  } else {
+                      options.fail && options.fail(status);
+                  }
+              }
+          }
+
+          //连接 和 发送 - 第二步
+          if (options.type == "GET") {
+              xhr.open("GET", options.url + "?" + params, true);
+              xhr.send(null);
+          } else if (options.type == "POST") {
+              xhr.open("POST", options.url, true);
+              //设置表单提交时的内容类型
+              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+              xhr.send(params);
+          }
+       }
+        //格式化参数
+        function formatParams(data) {
+            var arr = [];
+            for (var name in data) {
+                arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
+            }
+            arr.push(("v=" + Math.random()).replace(".",""));
+            return arr.join("&");
+        }
+
+
         console.log('openid = ' + openid);
         function MessageArrived(top, txt) {
            document.getElementById('msg').value = txt;
            console.log(txt);
-        }</script><script src=http://resource.yatiku.com/resources/groupchat/js/mqttmain.js></script><link href=./static/css/app.3cf2a6691f78594d34cec7ad0d5132b0.css rel=stylesheet></head><body><input type=hidden id=msg><div id=app></div><script type=text/javascript src=./static/js/manifest.76ad020090ae07d52e7d.js></script><script type=text/javascript src=./static/js/vendor.cbccd79e717840d57704.js></script><script type=text/javascript src=./static/js/app.280152137a60abec6043.js></script></body></html>
+        }</script><script src=http://resource.yatiku.com/resources/groupchat/js/mqttmain.js></script><link href=./static/css/app.2d60b8aa413a74e5dbbbc4a99691cb29.css rel=stylesheet></head><body><input type=hidden id=msg><div id=app></div><script type=text/javascript src=./static/js/manifest.a263c2cfa1fa9e94dcc0.js></script><script type=text/javascript src=./static/js/vendor.e7622ea372d64104de31.js></script><script type=text/javascript src=./static/js/app.0354255f0636026a32b8.js></script></body></html>
